@@ -26,8 +26,6 @@ public class playermoved : MonoBehaviour
     public Slider staminaSlider;
 
     [Header("Audio")]
-    public AudioClip screamClip;
-    private AudioSource audioSource;
 
     private weapon currentWeapon;
     private int weaponIndex = 0;
@@ -45,7 +43,6 @@ public class playermoved : MonoBehaviour
     void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
-        audioSource = GetComponent<AudioSource>();
     }
 
     void Start()
@@ -88,8 +85,12 @@ public class playermoved : MonoBehaviour
             currentWeapon.Reload();
     }
 
-    public void OnMove(InputAction.CallbackContext ctx) => moveInput = ctx.ReadValue<Vector2>();
-    public void OnLook(InputAction.CallbackContext ctx) => lookInput = ctx.ReadValue<Vector2>();
+    public void OnMove(InputAction.CallbackContext ctx) {
+        moveInput = ctx.ReadValue<Vector2>(); 
+    }
+    public void OnLook(InputAction.CallbackContext ctx) { 
+        lookInput = ctx.ReadValue<Vector2>();
+    }
 
     public void OnDash(InputAction.CallbackContext ctx)
     {
@@ -233,8 +234,6 @@ public class playermoved : MonoBehaviour
         if (other.CompareTag("Vidrio"))
         {
             TakeDamage(5);
-            if (screamClip != null && audioSource != null)
-                audioSource.PlayOneShot(screamClip);
 
             GameObject noiseZone = new GameObject("NoiseZone");
             SphereCollider sc = noiseZone.AddComponent<SphereCollider>();
