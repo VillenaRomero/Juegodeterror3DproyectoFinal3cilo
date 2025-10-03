@@ -76,20 +76,26 @@ public class playermoved : MonoBehaviour
         UpdateLifeUI();
 
         if (Input.GetMouseButtonDown(0))
+        {
             TryInteractMouse();
+        }
 
-        if (Input.GetKeyDown(KeyCode.Alpha1)) SelectWeapon(0);
+        if (Input.GetKeyDown(KeyCode.Alpha1)) { 
+            SelectWeapon(0); 
+        }
 
 
         if (Input.GetKeyDown(KeyCode.R) && currentWeapon != null)
+        {
             currentWeapon.Reload();
+        }
     }
 
     public void OnMove(InputAction.CallbackContext ctx) {
         moveInput = ctx.ReadValue<Vector2>(); 
     }
     public void OnLook(InputAction.CallbackContext ctx) { 
-        lookInput = ctx.ReadValue<Vector2>();
+        lookInput = ctx.ReadValue<Vector3>();
     }
 
     public void OnDash(InputAction.CallbackContext ctx)
