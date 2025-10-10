@@ -9442,7 +9442,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 0
 --- !u!114 &472655755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9475,7 +9475,7 @@ Canvas:
   m_GameObject: {fileID: 472655753}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -18953,7 +18953,7 @@ GameObject:
   - component: {fileID: 1698349136}
   - component: {fileID: 1698349135}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: Canvasplayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19016,7 +19016,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
+  m_VertexColorAlwaysGammaSpace: 1
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 1
   m_SortingLayerID: 0
@@ -19037,7 +19037,7 @@ RectTransform:
   - {fileID: 1747182317}
   - {fileID: 218060213}
   - {fileID: 519316638}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 2036113628}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -22308,49 +22308,49 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   securityCameras:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  playerCamera: {fileID: 1194189979}
+  - {fileID: 970197518}
+  - {fileID: 1922537942}
+  - {fileID: 142550656}
+  - {fileID: 1600440586}
+  - {fileID: 1751416209}
+  - {fileID: 1832051723}
+  - {fileID: 512305316}
+  - {fileID: 243742231}
+  - {fileID: 1177059177}
+  - {fileID: 1008575761}
+  - {fileID: 1223409006}
+  - {fileID: 1316260956}
+  - {fileID: 1999347927}
+  - {fileID: 995748735}
+  - {fileID: 962062811}
+  - {fileID: 549659840}
+  - {fileID: 930052659}
+  - {fileID: 58732937}
+  - {fileID: 1567132845}
+  - {fileID: 744979347}
+  - {fileID: 1499308248}
+  - {fileID: 1861621779}
+  - {fileID: 790355132}
+  - {fileID: 1970276341}
+  - {fileID: 450210098}
+  - {fileID: 1803896103}
+  - {fileID: 1976954005}
+  - {fileID: 1207240688}
+  - {fileID: 1927309351}
+  - {fileID: 272744935}
+  - {fileID: 1495101924}
+  - {fileID: 1177444808}
+  - {fileID: 1963124770}
+  - {fileID: 1189215884}
+  - {fileID: 1271569623}
+  - {fileID: 1482520656}
+  - {fileID: 1059163706}
+  - {fileID: 1703744877}
+  - {fileID: 1310438397}
+  - {fileID: 105659114}
+  - {fileID: 767490309}
+  - {fileID: 1936394963}
+  playerCamera: {fileID: 1184426602}
   uiCanvas: {fileID: 0}
   blackScreen: {fileID: 0}
   errorText: {fileID: 0}
@@ -22450,6 +22450,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1184426601}
+  - {fileID: 1698349138}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2036113629
@@ -22465,7 +22466,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
-  rotationSpeed: 45
+  rotationSpeed: 5
   currentLife: 20
   maxLife: 20
   lifeSlider: {fileID: 218060214}
@@ -23232,7 +23233,6 @@ SceneRoots:
   - {fileID: 2036113628}
   - {fileID: 2085931275}
   - {fileID: 57475795}
-  - {fileID: 1698349138}
   - {fileID: 233092154}
   - {fileID: 153673090}
   - {fileID: 716923948}

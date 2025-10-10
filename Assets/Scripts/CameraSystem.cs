@@ -8,7 +8,7 @@ public class CameraSystem : MonoBehaviour
     private int currentCameraIndex = 0;
 
     [Header("Jugador")]
-    public Camera playerCamera;
+    public CinemachineCamera playerCamera;
     private Vector3 savedPosition;
     private Quaternion savedRotation;
     private bool inSecurityMode = false;

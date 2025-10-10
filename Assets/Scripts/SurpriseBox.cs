@@ -35,6 +35,5 @@ public class SurpriseBox : MonoBehaviour
     {
         isOpen = true;
         isSpinning = false;
-        Debug.Log("¡La caja se abrió!");
     }
 }
