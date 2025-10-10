@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
@@ -6,7 +6,7 @@ public class playermoved : MonoBehaviour
 {
     [Header("Movimiento")]
     public float speed = 5f;
-    public float rotationSpeed = 300f;
+    public float rotationSpeed = 10f;
 
     [Header("Vida")]
     [SerializeField] private int currentLife = 20;
@@ -25,11 +25,14 @@ public class playermoved : MonoBehaviour
     public float staminaRegenRate = 15f;
     public Slider staminaSlider;
 
-    [Header("Audio")]
-
+    [Header("Armas")]
     private weapon currentWeapon;
     private int weaponIndex = 0;
     public weapon[] weapons;
+
+    [Header("Ruido")]
+    public GameObject noiseZonePrefab;
+    public float noiseLifetime = 2f;
 
     private bool isDashing = false;
     private float dashTimeLeft = 0f;
@@ -37,12 +40,14 @@ public class playermoved : MonoBehaviour
 
     private PlayerInput playerInput;
     private Vector2 moveInput;
-    private Vector2 lookInput;
     private bool isHiding = false;
+
+    private Camera mainCam;
 
     void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
+        mainCam = Camera.main;
     }
 
     void Start()
@@ -67,8 +72,8 @@ public class playermoved : MonoBehaviour
         }
         else if (!isHiding)
         {
-            Moved();
-            PlayerRotation();
+            MoveWithCameraDirection();  
+            PlayerLookAtMouse();         
             RegenerateStamina();
         }
 
@@ -80,23 +85,14 @@ public class playermoved : MonoBehaviour
             TryInteractMouse();
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha1)) { 
-            SelectWeapon(0); 
-        }
-
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+            SelectWeapon(0);
 
         if (Input.GetKeyDown(KeyCode.R) && currentWeapon != null)
-        {
             currentWeapon.Reload();
-        }
     }
 
-    public void OnMove(InputAction.CallbackContext ctx) {
-        moveInput = ctx.ReadValue<Vector2>(); 
-    }
-    public void OnLook(InputAction.CallbackContext ctx) { 
-        lookInput = ctx.ReadValue<Vector3>();
-    }
+    public void OnMove(InputAction.CallbackContext ctx) => moveInput = ctx.ReadValue<Vector2>();
 
     public void OnDash(InputAction.CallbackContext ctx)
     {
@@ -110,20 +106,40 @@ public class playermoved : MonoBehaviour
             currentWeapon.Fire();
     }
 
-    void Moved()
+    void MoveWithCameraDirection()
     {
-        float currentSpeed = speed * ((float)currentLife / maxLife);
-        Vector3 move = new Vector3(moveInput.x, 0, moveInput.y).normalized;
-        transform.position += move * currentSpeed * Time.deltaTime;
+        if (mainCam == null) return;
+
+        Vector3 camForward = mainCam.transform.forward;
+        Vector3 camRight = mainCam.transform.right;
+        camForward.y = 0;
+        camRight.y = 0;
+        camForward.Normalize();
+        camRight.Normalize();
+
+        Vector3 moveDir = (camForward * moveInput.y + camRight * moveInput.x).normalized;
+
+        float lifeRatio = (float)currentLife / maxLife;
+        float currentSpeed = speed * lifeRatio;
+        transform.position += moveDir * currentSpeed * Time.deltaTime;
     }
 
-    void PlayerRotation()
+    void PlayerLookAtMouse()
     {
-        if (lookInput.sqrMagnitude > 0.01f)
+        Ray ray = mainCam.ScreenPointToRay(Input.mousePosition);
+        Plane plane = new Plane(Vector3.up, Vector3.zero);
+
+        if (plane.Raycast(ray, out float distance))
         {
-            Vector3 direction = new Vector3(lookInput.x, 0, lookInput.y);
-            Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            Vector3 hitPoint = ray.GetPoint(distance);
+            Vector3 direction = (hitPoint - transform.position);
+            direction.y = 0;
+
+            if (direction.sqrMagnitude > 0.01f)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            }
         }
     }
 
@@ -151,19 +167,12 @@ public class playermoved : MonoBehaviour
         }
     }
 
-    void UpdateStaminaUI()
-    {
-        if (staminaSlider != null) staminaSlider.value = stamina;
-    }
-
-    void UpdateLifeUI()
-    {
-        if (lifeSlider != null) lifeSlider.value = currentLife;
-    }
+    void UpdateStaminaUI() { if (staminaSlider != null) staminaSlider.value = stamina; }
+    void UpdateLifeUI() { if (lifeSlider != null) lifeSlider.value = currentLife; }
 
     void TryInteractMouse()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = mainCam.ScreenPointToRay(Input.mousePosition);
 
         if (Physics.Raycast(ray, out RaycastHit hit, 3f))
         {
@@ -181,14 +190,14 @@ public class playermoved : MonoBehaviour
                 {
                     currentWeapon.AddAmmo(ap.amount);
                     Destroy(hit.collider.gameObject);
-                    Debug.Log("Munici�n recogida");
+                    Debug.Log("Munición recogida");
                 }
             }
             else if (hit.collider.CompareTag("HideSpot"))
             {
                 isHiding = !isHiding;
                 gameObject.GetComponent<MeshRenderer>().enabled = !isHiding;
-                Debug.Log(isHiding ? "Jugador escondido" : "Jugador sali�");
+                Debug.Log(isHiding ? "Jugador escondido" : "Jugador salió");
             }
         }
     }
@@ -221,18 +230,16 @@ public class playermoved : MonoBehaviour
         weaponIndex = index;
         currentWeapon = weapons[index];
         currentWeapon.gameObject.SetActive(true);
-
         Debug.Log("Arma seleccionada: " + currentWeapon.weaponName);
     }
+
     public void TakeDamage(int damage)
     {
         currentLife -= damage;
-        if (currentLife <= 0) Die();
-    }
-
-    void Die()
-    {
-        Debug.Log("Jugador muerto");
+        if (currentLife <= 0)
+        {
+            // Aquí podrías añadir animación o respawn
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -240,13 +247,13 @@ public class playermoved : MonoBehaviour
         if (other.CompareTag("Vidrio"))
         {
             TakeDamage(5);
-
-            GameObject noiseZone = new GameObject("NoiseZone");
-            SphereCollider sc = noiseZone.AddComponent<SphereCollider>();
-            sc.isTrigger = true;
-            sc.radius = 5f;
-            noiseZone.transform.position = transform.position;
-            Destroy(noiseZone, 1f);
+            CreateNoise(transform.position);
         }
+    }
+
+    void CreateNoise(Vector3 position)
+    {
+        GameObject noise = Instantiate(noiseZonePrefab, position, Quaternion.identity);
+        Destroy(noise, noiseLifetime);
     }
 }

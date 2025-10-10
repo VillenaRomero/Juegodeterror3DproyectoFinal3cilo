@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+﻿using Unity.Cinemachine;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class CameraSystem : MonoBehaviour
 {
-    [Header("Cámaras de seguridad")]
-    public Camera[] securityCameras;
+    public CinemachineCamera[] securityCameras;
     private int currentCameraIndex = 0;
 
     [Header("Jugador")]
@@ -27,8 +27,8 @@ public class CameraSystem : MonoBehaviour
     private bool cameraError = false;
 
     [Header("Reparación de cámaras")]
-    public bool hasRepairTool = false; 
-    public float repairTime = 10f;     
+    public bool hasRepairTool = false;
+    public float repairTime = 10f;
     private float repairTimer = 0f;
     private bool repairing = false;
     private int repairingCameraIndex = -1;
@@ -41,6 +41,7 @@ public class CameraSystem : MonoBehaviour
         if (errorText != null) errorText.enabled = false;
         if (mapImage != null) mapImage.enabled = false;
 
+        // Crear botones para cada cámara
         if (cameraButtonPrefab != null && buttonContainer != null)
         {
             for (int i = 0; i < securityCameras.Length; i++)
@@ -110,11 +111,7 @@ public class CameraSystem : MonoBehaviour
     void ExitSecurityMode()
     {
         inSecurityMode = false;
-
-        for (int i = 0; i < securityCameras.Length; i++)
-        {
-            securityCameras[i].enabled = false;
-        }
+        DisableAllCinemachineCameras();
 
         playerCamera.enabled = true;
         playerCamera.transform.position = savedPosition;
@@ -128,7 +125,7 @@ public class CameraSystem : MonoBehaviour
     {
         if (cameraError) return;
 
-        securityCameras[currentCameraIndex].enabled = false;
+        securityCameras[currentCameraIndex].Priority = 0;
 
         currentCameraIndex++;
         if (currentCameraIndex >= securityCameras.Length)
@@ -142,7 +139,7 @@ public class CameraSystem : MonoBehaviour
     {
         if (cameraError) return;
 
-        securityCameras[currentCameraIndex].enabled = false;
+        securityCameras[currentCameraIndex].Priority = 0;
 
         currentCameraIndex--;
         if (currentCameraIndex < 0)
@@ -156,28 +153,31 @@ public class CameraSystem : MonoBehaviour
     {
         if (cameraError) return;
 
-        securityCameras[currentCameraIndex].enabled = false;
+        securityCameras[currentCameraIndex].Priority = 0;
         currentCameraIndex = index;
         EnableOnlyCamera(securityCameras[currentCameraIndex]);
         ResetCameraTimer();
     }
 
-    void EnableOnlyCamera(Camera cam)
+    void EnableOnlyCamera(CinemachineCamera cam)
+    {
+        DisableAllCinemachineCameras();
+        cam.Priority = 10;
+    }
+
+    void DisableAllCinemachineCameras()
     {
         for (int i = 0; i < securityCameras.Length; i++)
         {
-            securityCameras[i].enabled = false;
+            if (securityCameras[i] != null)
+                securityCameras[i].Priority = 0;
         }
-        cam.enabled = true;
     }
 
     void EnablePlayerCamera()
     {
         playerCamera.enabled = true;
-        for (int i = 0; i < securityCameras.Length; i++)
-        {
-            securityCameras[i].enabled = false;
-        }
+        DisableAllCinemachineCameras();
     }
 
     void ResetCameraTimer()
